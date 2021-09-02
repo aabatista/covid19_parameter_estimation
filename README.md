@@ -65,7 +65,7 @@ cutoff,0.35
 
 All data in the manuscript are contained in the following databases. The data
 from Germany and Brazil, was obtained from the site
-https://data.humdata.org/dataset/novel-c oronavirus-2019-ncov-cases which
+https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases which
 contains the data compiled by the Johns Hopkins University Center for Systems
 Science and Engineering (JHU CSSE). The specific CSV files for the confirmed,
 recovered, and deceased are:
