@@ -9,7 +9,7 @@ The code of this project is distributed in the following files:
 * activeWorld.py (figures 2, 3, 4, and 5)
 * covidBR.py (the remaining figures)
 
-# **How to run the code**
+## **How to run the code**
 
 The command line to run activeWorld.py from a Linux terminal is
 
