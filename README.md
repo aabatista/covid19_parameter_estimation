@@ -9,7 +9,7 @@ The code of this project is distributed in the following files:
 * activeWorld.py (figures 2, 3, 4, and 5)
 * covidBR.py (the remaining figures)
 
-![image](flowchartAW.png "Flow chart of the data processing in activeWorld.py)
+![image](flowchartAW.png "Flow chart of the data processing in activeWorld.py")
 
 ## **How to run the code**
 
