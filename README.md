@@ -15,7 +15,7 @@ The code of this project is distributed in the following files:
 
 *Flow chart of the data processing in activeWorld.py*
 
-<\p>
+</p>
 
 ## **How to run the code**
 
