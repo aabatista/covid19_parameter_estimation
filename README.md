@@ -11,11 +11,11 @@ The code of this project is distributed in the following files:
 
 ![image](flowchartAW.png )
 
-<p align=center>
+<div align="center">
 
 Flow chart of the data processing in activeWorld.py
 
-</p>
+</div>
 
 ## **How to run the code**
 
