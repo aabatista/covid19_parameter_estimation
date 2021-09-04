@@ -21,7 +21,7 @@ The code of this project is distributed in the following files:
 
 The command line to run activeWorld.py from a Linux terminal is
 
-<mark> $ python3 activeWorld.py config.txt </mark>
+> **$ python3 activeWorld.py config.txt **
 
 The file config.txt has the following lines in the case of Germany:
 
