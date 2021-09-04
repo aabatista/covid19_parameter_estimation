@@ -13,7 +13,7 @@ The code of this project is distributed in the following files:
 
 <div align="center">
 
-Flow chart of the data processing in activeWorld.py
+*Flow chart of the data processing in activeWorld.py*
 
 </div>
 
