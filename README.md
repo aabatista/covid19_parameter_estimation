@@ -30,17 +30,6 @@ delay,13
 offset,41  
 cutoff,0.41  
 
-The command line to run activeWorld.py from a Linux terminal is
-
-> $ python3 activeWorld.py config.txt
-
-The file config.txt has the following lines in the case of Germany:
-
-country,Germany  
-delay,13  
-offset,41  
-cutoff,0.41  
-
 The file config.txt has the following lines in the case of Brazil:
 
 country,Brazil  
@@ -50,7 +39,7 @@ cutoff,0.43
 
 The command line to run covidBR.py from a Linux terminal is
 
-> $ python3 covidBR.py config.txt
+> **$ python3 covidBR.py config.txt**
 
 In the case of Paraíba, the file config.txt has the following lines:
 
