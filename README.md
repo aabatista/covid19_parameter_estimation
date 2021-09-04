@@ -11,9 +11,9 @@ The code of this project is distributed in the following files:
 
 ![image](flowchartAW.png )
 
-<p align="center">
+<p align=center>
 
-*Flow chart of the data processing in activeWorld.py*
+Flow chart of the data processing in activeWorld.py
 
 </p>
 
