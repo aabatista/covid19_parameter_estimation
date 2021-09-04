@@ -9,7 +9,8 @@ The code of this project is distributed in the following files:
 * activeWorld.py (figures 2, 3, 4, and 5)
 * covidBR.py (the remaining figures)
 
-![image](flowchartAW.png "Flow chart of the data processing in activeWorld.py")
+![image](flowchartAW.png )
+*Flow chart of the data processing in activeWorld.py*
 
 ## **How to run the code**
 
@@ -76,7 +77,8 @@ recovered, and deceased are:
 * time_series_covid19_deaths_global_narrow.csv
 * time_series_covid19_recovered_global_narrow.csv
 
-The header line of all three files is:
+All these three csv files have to be in the same directory of activeWorld.py
+file. The header line of all these three csv files is:
 
 Province/State,Country/Region,Lat,Long,Date,Value,ISO 3166-1 Alpha 3-Codes,
 Region Code,Sub-region Code,Intermediate Region Code
@@ -85,7 +87,8 @@ The data from Brazilian states and cities are obtained from the url:
 
 https://data.brasil.io/dataset/covid19/caso.csv.gz
 
-The header line is  
+The file *caso.csv* has to be in the same directory as covidBR.py
+The header line of *caso.csv* is  
 date,state,city,place_type,confirmed,deaths,order_for_place,is_last,
 estimated_population_2019,city_ibge_code,confirmed_per_100k_inhabitants,
 death_rate
