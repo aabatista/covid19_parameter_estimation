@@ -2,6 +2,7 @@
 #!/usr/bin/python
 # sensibilityAnalysis.py -- Check the dependence on the contagion rate and
 # lethality rate
+# Usage: python3 sensibilityAnalysis.py
 import matplotlib.pyplot as plt
 import scipy.integrate
 import numpy as np

@@ -1,3 +1,4 @@
+# Author: Adriano A. Batista, 2020
 import numpy as np
 import matplotlib.collections as mcoll
 from matplotlib import cm
