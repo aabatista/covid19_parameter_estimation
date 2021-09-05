@@ -21,27 +21,28 @@ The code of this project is distributed in the following files:
 
 The command line to run activeWorld.py from a Linux terminal is
 
-> **$ python3 activeWorld.py config.txt**
+> **$ python3 activeWorld.py configCountry.txt**
 
-The file config.txt has the following lines in the case of Germany:
+where Country is the alpha-3 ISO 3166 country code. 
+The file configDEU.txt has the following lines in the case of Germany:
 
 country,Germany  
-delay,13  
+delay,14  
 offset,41  
-cutoff,0.41  
+cutoff,0.49  
 
-The file config.txt has the following lines in the case of Brazil:
+The file configBRA.txt has the following lines in the case of Brazil:
 
 country,Brazil  
 delay,14  
-offset,22  
-cutoff,0.43  
+offset,24  
+cutoff,0.29 
 
 The command line to run covidBR.py from a Linux terminal is
 
-> **$ python3 covidBR.py config.txt**
+> **$ python3 covidBR.py configCityState.txt**
 
-In the case of Paraíba, the file config.txt has the following lines:
+In the case of Paraíba, the file configPB.txt has the following lines:
 
 state,PB  
 city,\_  
