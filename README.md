@@ -20,6 +20,10 @@ covidBR.py has a very similar flow chart*
 
 ## **How to run the code**
 
+The command line to run sensibilityAnalysis.py from a Linux terminal is simply
+
+> **$ python3 sensibilityAnalysis.py**
+
 The command line to run activeWorld.py from a Linux terminal is
 
 > **$ python3 activeWorld.py configCountry.txt**
