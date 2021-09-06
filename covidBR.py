@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Author: Adriano A. Batista, 2020
-# covidBR.py -- dados epidemiológicos e comparação com previsões teóricas
-# do Brasil
+# covidBR.py -- comparison of epidemiological data and theoretical fit for
+# Brazilian states and cities
 '''
  command line:
  python3 covidBR.py config.txt
@@ -49,6 +49,8 @@ def read_setup(inSetupFile):
   delay               atraso
   offset              outro atraso
   cutoff              valor máximo de k(t)
+  nu                  daily birth rate
+  mu                  daily death rate (pre covid pandemic)
   '''
   global state, city, delay, offset, cutoff
   # Read setup file
@@ -69,8 +71,9 @@ def read_setup(inSetupFile):
 read_setup(sys.argv[1])
 
 n_avg=delay 
-nu = 3.7844e-05 # taxa de natalidade diária (2018, IBGE) 
-mu = 1.6918e-05 # taxa de mortalidade diária (2018, IBGE) 
+#nu = 3.7844e-05 # taxa de natalidade diária (2018, IBGE) 
+#mu = 1.6918e-05 # taxa de mortalidade diária (2018, IBGE) 
+print('nu', nu, 'mu', mu)
 day = 24 # dia em horas
 dt = 1.0/day  # em unidade de dia
 tau = (1+n_avg*day)*dt # tempo médio de infecção em dias
@@ -163,10 +166,11 @@ for i in np.arange(0, N_as):
   if len(XX)==len(ZZ):
     slope, intercept, r_value, p_value, std_err = stats.linregress(XX, ZZ)
     I_avg = np.sum(ZZ)/7
+    S = 1.0-confirmed[i]/P_0
     if I_avg==0:
       ka_t=0
     else:
-      ka_t = slope/I_avg+1.0/tau
+      ka_t = (slope/I_avg+mu+1.0/tau)/S
     if ka_t<0:
       ka_t = 0
     elif ka_t>cutoff:
@@ -263,11 +267,11 @@ fig1.align_ylabels(axs)
 #fig1.tight_layout()
 fig1.subplots_adjust(hspace=0.26)
 ax = axs[0]
-ax.xaxis.set_major_locator(mdates.DayLocator(interval=14))
-ax.xaxis.set_minor_locator(mdates.DayLocator(interval=1))
+ax.xaxis.set_major_locator(mdates.DayLocator(interval=28))
+ax.xaxis.set_minor_locator(mdates.DayLocator(interval=7))
 ax.set_ylabel('$\kappa(t)$')
-ax.xaxis.set_major_locator(mdates.DayLocator(interval=14))
-ax.xaxis.set_minor_locator(mdates.DayLocator(interval=2))
+ax.xaxis.set_major_locator(mdates.DayLocator(interval=28))
+ax.xaxis.set_minor_locator(mdates.DayLocator(interval=7))
 ax.plot(dates[1:], kappa_t_vec, 'k-', ms=2)
 delta = timedelta(days=14)
 ax.set_xlim(dates.iloc[0], dates.iloc[-1]+delta)
@@ -280,8 +284,8 @@ ax = axs[1]
 ax.text(-0.1, 1.1, 'B', transform=ax.transAxes, size=12, weight='bold')
 ax.set_title('Reproduction number')
 #ax.set_xticks(dates[0::7])
-ax.xaxis.set_major_locator(mdates.DayLocator(interval=14))
-ax.xaxis.set_minor_locator(mdates.DayLocator(interval=2))
+ax.xaxis.set_major_locator(mdates.DayLocator(interval=28))
+ax.xaxis.set_minor_locator(mdates.DayLocator(interval=7))
 ax.yaxis.set_major_locator(MultipleLocator(1))
 ax.yaxis.set_minor_locator(AutoMinorLocator(0.5))
 ax.plot(dates[1:], R0_t, 'k-')
@@ -295,8 +299,8 @@ ax = axs[2]
 ax.set_title('Lethality and recovery rates')
 ax.text(-0.1, 1.1, 'C', transform=ax.transAxes, size=12, weight='bold')
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=14))
-plt.gca().xaxis.set_minor_locator(mdates.DayLocator(interval=2))
+plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=28))
+plt.gca().xaxis.set_minor_locator(mdates.DayLocator(interval=7))
 ax.plot(dates[1:], Pl_avg, '-', linewidth=1.5, label="Lethality probability (week average)")
 ax.plot(dates[1:], 1-Pl_avg, '-.', linewidth=1.5,  label="Recovery probability (week average)")
 ax.set_xlim(dates.iloc[0], dates.iloc[-1]+delta)
@@ -322,8 +326,8 @@ fig2.tight_layout()
 # A. confirmed cases
 ax= axs[0] 
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-ax.xaxis.set_major_locator(mdates.DayLocator(interval=14))
-ax.xaxis.set_minor_locator(mdates.DayLocator(interval=2))
+ax.xaxis.set_major_locator(mdates.DayLocator(interval=28))
+ax.xaxis.set_minor_locator(mdates.DayLocator(interval=7))
 C= P_0*(I+R+M)
 ax.plot(dates[1:], C[::day], 'r-', label=u"$P_0[I(t)+R(t)+M(t)]$, theoretical model")
 ax.text(-0.1, 1.00, 'A', transform=ax.transAxes, size=12, weight='bold')
@@ -335,8 +339,8 @@ ax.legend()
 # B. Death cases
 ax=axs[1]
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-ax.xaxis.set_major_locator(mdates.DayLocator(interval=14))
-ax.xaxis.set_minor_locator(mdates.DayLocator(interval=2))
+ax.xaxis.set_major_locator(mdates.DayLocator(interval=28))
+ax.xaxis.set_minor_locator(mdates.DayLocator(interval=7))
 ax.plot(dates[1:], P_0*M[::day], 'r-', label=u"$P_0M(t)$, theoretical model")
 ax.text(-0.1, 1.00, 'B', transform=ax.transAxes, size=12, weight='bold')
 ax.legend()
@@ -347,8 +351,8 @@ plt.gcf().autofmt_xdate()
 # C. Active cases
 ax=axs[2]
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-ax.xaxis.set_major_locator(mdates.DayLocator(interval=14))
-ax.xaxis.set_minor_locator(mdates.DayLocator(interval=2))
+ax.xaxis.set_major_locator(mdates.DayLocator(interval=28))
+ax.xaxis.set_minor_locator(mdates.DayLocator(interval=7))
 ax.plot(dates[delay:], activeDelay, 'g+', ms=3,  label= 'estimate, delay %d days' % delay)
 print(len(dates), len(I[::day]))
 ax.plot(dates[:-1], P_0*I[::day], 'r-', label=u"$P_0I(t)$, theoretical model")
