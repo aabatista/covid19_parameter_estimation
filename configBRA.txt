@@ -1,0 +1,6 @@
+country,Brazil
+delay,15
+offset,23
+cutoff,0.425
+nu,3.7844e-5
+mu,1.6918e-5

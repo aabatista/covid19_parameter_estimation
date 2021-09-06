@@ -1,0 +1,6 @@
+country,Germany
+delay,14
+offset,41
+cutoff,0.41
+nu,2.591e-5
+mu,3.169e-5
