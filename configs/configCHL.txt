@@ -1,0 +1,6 @@
+country,Chile
+delay,12
+offset,28
+cutoff,0.215
+nu,0.0
+mu,0.0

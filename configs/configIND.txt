@@ -1,0 +1,6 @@
+country,India
+delay,14
+offset,41
+cutoff,0.245
+nu,0.0
+mu,0.0

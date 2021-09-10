@@ -1,0 +1,6 @@
+country,Colombia
+delay,14
+offset,16
+cutoff,0.20
+nu,0.0
+mu,0.0
