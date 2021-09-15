@@ -31,17 +31,27 @@ The command line to run activeWorld.py from a Linux terminal is
 where Country is the alpha-3 ISO 3166 country code. 
 The file configDEU.txt has the following lines in the case of Germany:
 
-country,Germany  
-delay,14  
-offset,41  
-cutoff,0.49  
+country,Germany
+delay,14
+offset,41
+cutoff,0.43
+nu,2.591e-5
+mu,3.169e-5
 
+The parameter **delay** is tau in the paper.
+The parameter **offset** indicates the initial datapoint to be used by the
+simulation from the date of the first recorded case.
+The parameter **cutoff** is the upper bound of the contagion rate. 
+**nu** is the daily birth rate.
+**mu** is the daily death rate.
 The file configBRA.txt has the following lines in the case of Brazil:
 
-country,Brazil  
-delay,14  
-offset,24  
-cutoff,0.29 
+country,Brazil
+delay,14
+offset,23
+cutoff,0.29
+nu,3.7844e-5
+mu,1.6918e-5
 
 The command line to run covidBR.py from a Linux terminal is
 
@@ -52,17 +62,20 @@ In the case of Paraíba, the file configPB.txt has the following lines:
 state,PB  
 city,\_  
 delay,14  
-offset,0  
-cutoff,0.38  
+offset,19
+cutoff,0.26
+nu,4.0139e-5
+mu,1.7956e-5
 
 The file configCampinaGrandePB.txt has the following lines in the case of Campina Grande:
 
-state,PB  
-city,Campina Grande  
-delay,14  
-offset,21  
-cutoff,0.35  
-
+state,PB
+city,Campina Grande
+delay,14
+offset,21
+cutoff,0.33
+nu,4.2943e-5
+mu,1.9616e-5
 
 ## DATA
 
