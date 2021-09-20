@@ -31,7 +31,7 @@ The command line to run activeWorld.py from a Linux terminal is
 where Country is the alpha-3 ISO 3166 country code. 
 The file configDEU.txt has the following lines in the case of Germany:
 
-country,Germany
+country,Germany  
 delay,14 
 offset,41 
 cutoff,0.43 
