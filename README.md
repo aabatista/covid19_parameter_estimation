@@ -46,11 +46,11 @@ The parameter **cutoff** is the upper bound of the contagion rate.
 **mu** is the daily death rate.
 The file configBRA.txt has the following lines in the case of Brazil:
 
-country,Brazil 
-delay,14 
-offset,23 
-cutoff,0.29 
-nu,3.7844e-5 
+country,Brazil  
+delay,14  
+offset,23  
+cutoff,0.29  
+nu,3.7844e-5  
 mu,1.6918e-5 
 
 The command line to run covidBR.py from a Linux terminal is
