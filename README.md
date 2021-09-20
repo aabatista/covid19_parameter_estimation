@@ -32,11 +32,11 @@ where Country is the alpha-3 ISO 3166 country code.
 The file configDEU.txt has the following lines in the case of Germany:
 
 country,Germany  
-delay,14 
-offset,41 
-cutoff,0.43 
-nu,2.591e-5 
-mu,3.169e-5 
+delay,14  
+offset,41  
+cutoff,0.43  
+nu,2.591e-5  
+mu,3.169e-5  
 
 The parameter **delay** is tau in the paper.
 The parameter **offset** indicates the initial datapoint to be used by the
