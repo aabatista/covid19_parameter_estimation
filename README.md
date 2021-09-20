@@ -71,10 +71,10 @@ The file configCampinaGrandePB.txt has the following lines in the case of Campin
 
 state,PB  
 city,Campina Grande  
-delay,14 
-offset,21 
-cutoff,0.33 
-nu,4.2943e-5 
+delay,14  
+offset,21  
+cutoff,0.33  
+nu,4.2943e-5  
 mu,1.9616e-5  
 
 ## DATA
