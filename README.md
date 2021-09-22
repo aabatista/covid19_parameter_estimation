@@ -63,9 +63,9 @@ state,PB
 city,\_  
 delay,14  
 offset,19
-cutoff,0.26
-nu,4.0139e-5
-mu,1.7956e-5
+cutoff,0.26  
+nu,4.0139e-5  
+mu,1.7956e-5  
 
 The file configCampinaGrandePB.txt has the following lines in the case of Campina Grande:
 
@@ -102,6 +102,7 @@ https://data.brasil.io/dataset/covid19/caso.csv.gz
 
 The file *caso.csv* has to be in the same directory as covidBR.py
 The header line of *caso.csv* is  
+
 date,state,city,place_type,confirmed,deaths,order_for_place,is_last,
 estimated_population_2019,city_ibge_code,confirmed_per_100k_inhabitants,
 death_rate
