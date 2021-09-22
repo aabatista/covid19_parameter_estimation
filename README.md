@@ -62,7 +62,7 @@ In the case of Paraíba, the file configPB.txt has the following lines:
 state,PB  
 city,\_  
 delay,14  
-offset,19
+offset,19  
 cutoff,0.26  
 nu,4.0139e-5  
 mu,1.7956e-5  
