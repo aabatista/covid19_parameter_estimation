@@ -73,7 +73,6 @@ read_setup(sys.argv[1])
 n_avg=delay 
 #nu = 3.7844e-05 # taxa de natalidade diária (2018, IBGE) 
 #mu = 1.6918e-05 # taxa de mortalidade diária (2018, IBGE) 
-print('nu', nu, 'mu', mu)
 day = 24 # dia em horas
 dt = 1.0/day  # em unidade de dia
 tau = (1+n_avg*day)*dt # tempo médio de infecção em dias
@@ -99,8 +98,8 @@ logFile = 'log'+city+state+'.txt'
 # remove white spaces
 logFile = logFile.replace(' ','')
 f = open(logFile, 'w')
-f.write('estado %s, cidade %s, atraso %d, offset %s, cutoff %g\n' 
-    % (state,  city, delay, offset, cutoff))
+f.write('estado %s, cidade %s, atraso %d, offset %s, cutoff %g, nu %g, mu %g\n' 
+    % (state,  city, delay, offset, cutoff, nu, mu))
 ##########################################################
 # 1. Data processing
 # File caso.csv obtained from the site https://data.brasil.io/dataset/covid19/_meta/list.html
@@ -117,6 +116,10 @@ else:
   dados = dados[dados['city'].str.contains(city)]
 
 dados = dados.sort_values('date', ascending=True)
+end_date = '2021-09-09'
+mask = dados['date']<= end_date
+print(dados['date'].iloc[0])
+dados = dados.loc[mask]
 confirmed = dados['confirmed'].to_numpy().astype(int)
 deaths = dados['deaths'].to_numpy().astype(int)
 ind0 = (confirmed!=0).argmax()
@@ -255,7 +258,7 @@ R = y[:, 2]
 M = y[:, 3]
 
 # B. generate Rt
-R0_t = tau*kappa_t_vec*S[::day]
+R0_t = kappa_t_vec*S[::day]/(mu+1.0/tau)
 
 # 5. Plot results
 # Figure 1
@@ -273,7 +276,7 @@ ax.set_ylabel('$\kappa(t)$')
 ax.xaxis.set_major_locator(mdates.DayLocator(interval=28))
 ax.xaxis.set_minor_locator(mdates.DayLocator(interval=7))
 ax.plot(dates[1:], kappa_t_vec, 'k-', ms=2)
-delta = timedelta(days=14)
+delta = timedelta(days=0)
 ax.set_xlim(dates.iloc[0], dates.iloc[-1]+delta)
 ax.set_ylim(0., )
 ax.text(-0.1, 1.1, 'A', transform=ax.transAxes, size=12, weight='bold')
@@ -455,7 +458,7 @@ Nfcast = 14
 nRuns = 1000 # average and confidence interval from these runs
 sampleSize = 10
 nSamples = int(nRuns/sampleSize)
-shift = -14 # it has to be zero or negative, in days
+shift = -7 # it has to be zero or negative, in days
 nBinsHist = 40
 colors = plt.cm.jet(np.linspace(0, 1, nBinsHist+1))
 dia0= dates.iloc[shift]
@@ -749,4 +752,16 @@ fig2.savefig(figure, bbox_inches='tight')
 f.write('%s\n' % figure)
 f.close()
 print(logFile)
+
+# root mean square error
+errConf = np.sqrt(np.sum((confirmed[:-1]-C[::day])**2)/len(confirmed))
+errConf /= P_0
+print('Error confirmed cases', errConf)
+
+# R squared (coefficient of determination)
+y_bar = np.sum(confirmed)/len(confirmed)
+SS_tot = np.sum((confirmed[:-1]-y_bar)**2)
+SS_res = np.sum((confirmed[:-1]-C[::day])**2)
+R2= 1-SS_res/SS_tot
+print('R2 %g' % R2)
 plt.show()
