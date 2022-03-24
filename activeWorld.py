@@ -37,6 +37,11 @@ from datetime import datetime
 from collections import OrderedDict
 import unidecode
 plt.rcParams['axes.grid'] = True
+def set_xaxis(ax, major, minor):
+  ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+  ax.xaxis.set_major_locator(mdates.DayLocator(interval=major))
+  ax.xaxis.set_minor_locator(mdates.DayLocator(interval=minor))
+
 
 def read_setup(inSetupFile):
   # open SIRD model parameter data 
@@ -69,8 +74,8 @@ def read_setup(inSetupFile):
 read_setup(sys.argv[1])
 # create log file
 logFile = 'log'+country+'.txt'
-f = open(logFile, 'w')
-f.write('country %s, delay %d, offset %d, cutoff %g\n' %(country, delay, offset,
+flog = open(logFile, 'w')
+flog.write('country %s, delay %d, offset %d, cutoff %g\n' %(country, delay, offset,
   cutoff))
 ##########################################################
 # 1. Data processing
@@ -86,7 +91,7 @@ confirmed = df.Value.to_numpy().astype(int)
 ind0 = (confirmed!=0).argmax() # first nonzero index of confirmed
 ind0 += offset
 confirmed = confirmed[ind0:] # cut off the leading zeros
-f.write('ind0 %d, offset %d\n' % (ind0, offset))
+flog.write('ind0 %d, offset %d\n' % (ind0, offset))
 dates = pd.to_datetime(df.Date) # covert string dates to datetime format
 dates = dates[ind0:]
 # b. Open deaths datafile, create dataframe.
@@ -96,7 +101,7 @@ deaths = df.Value.to_numpy().astype(int)
 deaths = deaths[::-1]
 deaths = deaths[ind0:]
 indFirstDeath = (deaths!=0).argmax()
-f.write('indFirstDeath %d, First death on %s, number of deaths %d\n'
+flog.write('indFirstDeath %d, First death on %s, number of deaths %d\n'
   % (indFirstDeath, dates.iloc[indFirstDeath], deaths[indFirstDeath]))
 # c. Open recovered datafile, create dataframe.
 df = pd.read_csv(csvFiles[2], sep =',', skiprows=0, header=0, names=["ProvinceState", "Country/Region", "Lat", "Long", "Date", "Value", "ISO 3166-1 Alpha 3-Codes", "Region Code", "Sub-region Code", "Intermediate Region Code"])
@@ -117,7 +122,7 @@ population = population.replace(' ','')
 population = population.replace(',','')
 print(df)
 P_0 = int(population)*1000
-f.write('População em 2019 %d\n' % (P_0))
+flog.write('População em 2019 %d\n' % (P_0))
 
 # 2. Statistical analysis
 # Active cases delay estimate
@@ -228,7 +233,7 @@ C_0 = confirmed[0]
 R_0 = recovered[0]
 D_0 = deaths[0]
 A_0 = C_0-R_0-D_0
-f.write('C_0 %g, A_0 %g, R_0 %g, D_0 %g\n' % (C_0, A_0, R_0, D_0))
+flog.write('C_0 %g, A_0 %g, R_0 %g, D_0 %g\n' % (C_0, A_0, R_0, D_0))
 yinit = [1.0-C_0/P_0, A_0/P_0, R_0/P_0, D_0/P_0] # initial values
 y = scipy.integrate.odeint(derivs, yinit, tt)
 S = y[:, 0]
@@ -256,6 +261,7 @@ ax1.set_xlim(dates.iloc[0], dates.iloc[-1])
 ax1.set_ylim(0., )
 ax1.text(-0.1, 1.1, 'A', transform=ax1.transAxes, size=12, weight='bold')
 plt.gcf().autofmt_xdate()
+
 
 # B. Dynamic reproductive number R_0(t)
 ax2 = fig1.add_subplot(312)
@@ -286,15 +292,15 @@ ax3.set_ylim(0., 1.)
 plt.gcf().autofmt_xdate()
 plt.legend(fontsize=10)
 plt.gcf().autofmt_xdate()
-f.write('first P_let avg %g\n' % (np.sum(P_let[:21])/21))
-f.write('last P_let avg %g\n' % (np.sum(P_let[-21:])/21))
+flog.write('first P_let avg %g\n' % (np.sum(P_let[:21])/21))
+flog.write('last P_let avg %g\n' % (np.sum(P_let[-21:])/21))
 figure = 'contagionLetRecRates_%s.pdf'% country
 # remove accents
 figure = unidecode.unidecode(figure)
 # remove white spaces
 figure = figure.replace(' ','')
 plt.savefig(figure, bbox_inches='tight')
-f.write('%s\n' % figure)
+flog.write('%s\n' % figure)
 # Figure 2: confirmed, recovered, deaths, and active
 fig2, axs = plt.subplots(2, 2, figsize=(10, 8), sharex=True)
 
@@ -412,7 +418,7 @@ states = [0, 1]
 W = transitionMatrix = getTransMatrix(dk)
 # Get entropy
 entropyS = -np.sum(W*np.log(W))
-f.write("Entropia S %g\n" % entropyS)
+flog.write("Entropia S %g\n" % entropyS)
 probPos, p_edges, probNeg, n_edges = getProbs(dk, Nbins)
 dl = np.diff(letRate[priors+shift:shift])
 letTransMat = getTransMatrix(dl)
@@ -442,7 +448,7 @@ figure = unidecode.unidecode(figure)
 # remove white spaces
 figure = figure.replace(' ','')
 plt.savefig(figure, bbox_inches='tight')
-f.write('%s\n' % figure)
+flog.write('%s\n' % figure)
 
 # Analytical integration
 Sf = np.zeros(Nfcast, dtype=float)
@@ -660,7 +666,173 @@ figure = unidecode.unidecode(figure)
 figure = figure.replace(' ','')
 fig2.tight_layout(pad=2.0)
 fig2.savefig(figure, bbox_inches='tight')
-f.write(figure)
-f.close()
+flog.write(figure)
+
+# R squared (coefficient of determination)
+#y_bar = np.sum(confirmed)/len(confirmed)
+#SS_tot = np.sum((confirmed[:-1]-y_bar)**2)
+#SS_res = np.sum((confirmed[:-1]-C[::day])**2)
+#R2= 1-SS_res/SS_tot
+  #print('R2 %g' % R2)
+### R squared calculation
+# R squared (coefficient of determination)
+def Rsquared(y,f):
+  y_bar = np.sum(y)/len(y)
+  SS_tot = np.sum((y-y_bar)**2)
+  #SS_tot = np.sum((confirmed[:-1]-y_bar)**2)
+  SS_res = np.sum((y-f)**2)
+  R2= 1-SS_res/SS_tot
+  return R2
+fig3, ax = plt.subplots(2, figsize=(8, 12), sharex=True)
+fig3.align_ylabels(axs)
+fig3.subplots_adjust(hspace=0.26)
+
+## running window R2 calculation
+# confirmed cases
+Nwindow = 120
+r2Conf = np.zeros(len(confirmed[:-Nwindow]))
+for i in np.arange(len(confirmed[:-Nwindow])):
+  y = confirmed[i:i+Nwindow]
+  f = C[i*day:(i+Nwindow)*day:day]
+  r2Conf[i] = Rsquared(y, f)
+
+legenda = u"running %d-day window $R^2$ of confirmed cases in %s" % (Nwindow,
+    country)
+ax[0].plot(dates[Nwindow:], r2Conf, 'r-', label=legenda)
+#ax[0].set_title('Running window $R^2$, %d-day window' % Nwindow)
+ax[0].set_ylabel('$R^2$')
+ax[0].set_ylim(0, 1.0)
+r2D = np.zeros(len(deaths[:-Nwindow]))
+# running window R2 calculation
+# death cases
+for i in np.arange(len(confirmed[:-Nwindow])):
+  y = deaths[i:i+Nwindow]
+  f = P_0*M[i*day:(i+Nwindow)*day:day]
+  r2D[i] = Rsquared(y, f)
+
+legenda = u"running %d-day window $R^2$ of death cases in %s" % (Nwindow,
+    country)
+ax[0].plot(dates[Nwindow:], r2D, 'k--', label=legenda)
+#ax[1].set_title('Running window $R^2$, %d-day window' % Nwindow)
+ax[0].set_ylabel('$R^2$')
+ax[0].legend(fontsize=10)
+ax[0].set_xlim(dates.iloc[Nwindow], dates.iloc[-1])
+
+## Cumulative R2 calculation
+Nwindow = 120
+r2C = np.zeros(len(confirmed[:-Nwindow]))
+for ind, i in enumerate(np.arange(Nwindow, len(confirmed[:-1]))):
+  y = confirmed[:i]
+  f = C[:i*day:day]
+  r2C[ind] = Rsquared(y, f)
+legenda = u"Cumulative $R^2$ of confirmed cases in %s" % (country)
+ax[1].plot(dates[Nwindow:-1], r2C[:-1], 'r-', label=legenda)
+r2D = np.zeros(len(deaths[:-Nwindow]))
+for ind, i in enumerate(np.arange(Nwindow, len(confirmed[:-1]))):
+  y = deaths[:i]
+  f = P_0*M[:i*day:day]
+  r2D[ind] = Rsquared(y, f)
+legenda = u"Cumulative $R^2$ of death cases in %s" % (country)
+ax[1].plot(dates[Nwindow:-1],r2D[:-1], 'k--', label=legenda)
+ax[1].set_ylim(0, 1.0)
+ax[1].legend()
+ax[1].set_xlim(dates.iloc[Nwindow], dates.iloc[-1])
+plt.gcf().autofmt_xdate()
+set_xaxis(ax[1], 28, 7)
+
+R2 = Rsquared(confirmed[:-1], C[::day])
+flog.write('confirmed cases R2 %g' % R2)
+R2 = Rsquared(deaths[:-1], P_0*M[::day])
+flog.write('death cases R2 %g' % R2)
+
+figure = 'R2confDea%s.pdf'% (country)
+# remove accents
+figure = unidecode.unidecode(figure)
+# remove white spaces
+figure = figure.replace(' ','')
+fig3.savefig(figure, bbox_inches='tight')
+flog.write('%s\n' % figure)
+
+fig4, ax = plt.subplots(2, figsize=(8, 12), sharex=True)
+fig4.align_ylabels(axs)
+fig4.subplots_adjust(hspace=0.26)
+
+### NRMSE calculation
+# root mean square error
+def NRMSE (y, f):
+  rmse = np.sqrt(np.sum((y-f)**2)/len(y))
+  y_bar = np.sum(y)/len(y)
+  nrmse = rmse/y_bar
+  return nrmse
+## running window NRMSE calculation
+# confirmed cases
+Nwindow = 90
+nrmseC = np.zeros(len(confirmed[:-Nwindow]))
+for i in np.arange(len(confirmed[:-Nwindow])):
+  y = confirmed[i:i+Nwindow]
+  f = C[i*day:(i+Nwindow)*day:day]
+  nrmseC[i] = NRMSE(y, f)
+
+legenda = u"running %d-day window $NRMSE$ of confirmed cases in %s" % (Nwindow, country)
+ax[0].plot(dates[Nwindow:], nrmseC, 'r-', label=legenda)
+#ax[0].set_title('Running window $R^2$, %d-day window' % Nwindow)
+ax[0].set_ylabel('$R^2$')
+#ax[0].set_ylim(0, 1.0)
+## running window NRMSE calculation
+# death cases
+nrsmeD = np.zeros(len(deaths[:-Nwindow]))
+for i in np.arange(len(confirmed[:-Nwindow])):
+  y = deaths[i:i+Nwindow]
+  f = P_0*M[i*day:(i+Nwindow)*day:day]
+  nrsmeD[i] = NRMSE(y, f)
+
+legenda = u"running %d-day window $NRMSE$ of death cases in %s" % (Nwindow, country)
+ax[0].plot(dates[Nwindow:], nrsmeD, 'k--', label=legenda)
+ax[0].set_ylabel('$NRSME$')
+ax[0].legend(fontsize=10)
+ax[0].set_xlim(dates.iloc[Nwindow], dates.iloc[-1])
+ax[0].set_ylim(0, 0.25)
+
+# Cumulative nrmse calculation
+Nwindow = 90
+nrmseC = np.zeros(len(confirmed[:-Nwindow]))
+for ind, i in enumerate(np.arange(Nwindow, len(confirmed[:-1]))):
+  y = confirmed[:i]
+  f = C[:i*day:day]
+  nrmseC[ind] = NRMSE(y, f)
+legenda = u"Cumulative $NRMSE$ of confirmed cases in %s" % (country)
+ax[1].plot(dates[Nwindow:-1], nrmseC[:-1], 'r-', label=legenda)
+nrmseD = np.zeros(len(deaths[:-Nwindow]))
+for ind, i in enumerate(np.arange(Nwindow, len(confirmed[:-1]))):
+  y = deaths[:i]
+  f = P_0*M[:i*day:day]
+  nrmseD[ind] = NRMSE(y, f)
+legenda = u"Cumulative $NRMSE$ of death cases in %s" % (country)
+ax[1].plot(dates[Nwindow:-1], nrmseD[:-1], 'k--', label=legenda)
+ax[0].set_ylabel('$NRMSE$')
+ax[1].set_ylabel('$NRMSE$')
+ax[0].legend(fontsize=10)
+ax[1].legend()
+ax[1].set_xlim(dates.iloc[Nwindow], dates.iloc[-1])
+ax[1].set_ylim(0, 0.25)
+plt.gcf().autofmt_xdate()
+set_xaxis(ax[1], 28, 7)
+
+#errConf = np.sqrt(np.sum((confirmed[:-1]-C[::day])**2)/len(confirmed))
+#errConf /= P_0
+errConf = NRMSE(confirmed[:-1], C[::day])
+flog.write('Error in confirmed cases %g' % errConf)
+errDea = NRMSE(deaths[:-1], P_0*M[::day])
+flog.write('Error in death cases %g' % errDea)
+
+figure = 'RMSEconfDea%s.pdf'% (country)
+# remove accents
+figure = unidecode.unidecode(figure)
+# remove white spaces
+figure = figure.replace(' ','')
+fig4.savefig(figure, bbox_inches='tight')
+flog.write('%s\n' % figure)
+flog.close()
 print(logFile)
+
 plt.show()

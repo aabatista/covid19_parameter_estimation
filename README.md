@@ -1,5 +1,6 @@
 # covid19_parameter_estimation
-Python code of the arxiv preprint https://arxiv.org/abs/2011.06515
+Python code of the paper published in the journal Frontiers in Applied Mathematics and Statistics
+(https://www.frontiersin.org/articles/10.3389/fams.2022.645614/abstract)
 entitled **"An epidemiological compartmental model with automated parameter
 estimation and forecasting of the spread of COVID-19 with analysis of data
 from Germany and Brazil"**
